@@ -25,7 +25,7 @@ class TestApp:
             response = app.test_client().get('/vendors')
             assert response.status_code == 200
             assert 'application/json' in response.content_type
-            response = response.json
+            response = response.json()
             assert [vendor['id'] for vendor in response] == [
                 vendor.id for vendor in vendors]
             assert [vendor['name'] for vendor in response] == [
@@ -107,7 +107,7 @@ class TestApp:
 
         with app.app_context():
             response = app.test_client().get('/sweets/0')
-            assert response.status_code == 404
+            assert response.status_code == 404 
             assert response.content_type == 'application/json'
             assert response.json.get('error') == "Sweet not found"
             assert response.status_code == 404

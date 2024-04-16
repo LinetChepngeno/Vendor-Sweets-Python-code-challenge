@@ -2,7 +2,7 @@
 
 from models import db, Sweet, Vendor, VendorSweet
 from flask_migrate import Migrate
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, jsonify
 from flask_restful import Api, Resource
 import os
 
@@ -13,11 +13,20 @@ DATABASE = os.environ.get(
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JSONIFY_404_ERRORS'] = True
+
 app.json.compact = False
 
 migrate = Migrate(app, db)
 
 db.init_app(app)
+
+# Define route to retrieve sweets
+@app.route('/sweets', methods=['GET'])
+def get_sweets():
+    sweets = Sweet.query.all()
+    sweets_data = [{'name': sweet.name} for sweet in sweets]
+    return jsonify({'sweets': sweets_data})
 
 @app.route('/')
 def home():
