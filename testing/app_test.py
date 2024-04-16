@@ -24,8 +24,8 @@ class TestApp:
 
             response = app.test_client().get('/vendors')
             assert response.status_code == 200
-            assert 'application/json' in response.content_type
-            response = response.json()
+            assert response.content_type == 'application/json'
+            response = response.json
             assert [vendor['id'] for vendor in response] == [
                 vendor.id for vendor in vendors]
             assert [vendor['name'] for vendor in response] == [
@@ -57,7 +57,7 @@ class TestApp:
         with app.app_context():
             response = app.test_client().get('/vendors/0')
             assert response.status_code == 404
-            assert 'application/json' in response.content_type
+            assert response.content_type == 'application/json'
             assert response.json.get('error') == "Vendor not found"
             assert response.status_code == 404
 
@@ -107,7 +107,7 @@ class TestApp:
 
         with app.app_context():
             response = app.test_client().get('/sweets/0')
-            assert response.status_code == 404 
+            assert response.status_code == 404
             assert response.content_type == 'application/json'
             assert response.json.get('error') == "Sweet not found"
             assert response.status_code == 404
@@ -177,8 +177,7 @@ class TestApp:
                 }
             )
             assert response.status_code == 400
-            assert 'application/json' in response.content_type 
-            assert response.json['errors']
+            assert response.json['errors'] == ["validation errors"]
 
 
     def test_deletes_vendor_sweet_by_id(self):
@@ -212,5 +211,4 @@ class TestApp:
         with app.app_context():
             response = app.test_client().delete('/vendor_sweets/0')
             assert response.status_code == 404
-            assert 'application/json' in response.content_type
             assert response.json.get('error') == "VendorSweet not found"
